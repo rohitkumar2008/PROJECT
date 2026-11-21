@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Blood Test Guide — Understand Your Lab Report</title>
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    --paper: #ECEAE1;
+    --panel: #F7F5EE;
+    --ink: #1C2A2B;
+    --ink-soft: #52605F;
+    --line: #C9C2AF;
+    --accent: #2F6F6B;
+    --accent-ink: #F7F5EE;
+    --flag-high: #A83F3F;
+    --flag-low: #A6801F;
+    --flag-high-bg: #F3E2DE;
+    --flag-low-bg: #F3EBD8;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --paper: #171B19;
+      --panel: #1F2422;
+      --ink: #E7E4DB;
+      --ink-soft: #A9B2AC;
+      --line: #3A413D;
+      --accent: #6FB3AC;
+      --accent-ink: #12201E;
+      --flag-high: #E38A83;
+      --flag-low: #E0BE6E;
+      --flag-high-bg: #2E2020;
+      --flag-low-bg: #2C2818;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #171B19;
+    --panel: #1F2422;
+    --ink: #E7E4DB;
+    --ink-soft: #A9B2AC;
+    --line: #3A413D;
+    --accent: #6FB3AC;
+    --accent-ink: #12201E;
+    --flag-high: #E38A83;
+    --flag-low: #E0BE6E;
+    --flag-high-bg: #2E2020;
+    --flag-low-bg: #2C2818;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); height: 100%; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; height: 100%; background: var(--paper); color: var(--ink);
+    font-family: -apple-system, "Segoe UI", system-ui, Helvetica, Arial, sans-serif;
+    font-size: 15px; line-height: 1.5;
+  }
+  h1,h2,h3 { font-family: Georgia, "Iowan Old Style", "Times New Roman", serif; font-weight: 600; margin: 0 0 .4em; }
+  .num { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Courier New", monospace; }
+  a { color: var(--accent); }
+
+  header {
+    padding: calc(env(safe-area-inset-top,0px) + 16px) 20px 14px;
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  header h1 { font-size: 1.25rem; letter-spacing: .01em; }
+  header .tag { color: var(--ink-soft); font-size: .82rem; max-width: 34ch; }
+
+  .notice {
+    background: var(--panel); border-bottom: 1px solid var(--line);
+    padding: 9px 20px; font-size: .82rem; color: var(--ink-soft);
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  }
+  .notice strong { color: var(--ink); font-weight: 600; }
+  .notice button {
+    margin-left: auto; background: none; border: 1px solid var(--line); color: var(--ink-soft);
+    border-radius: 3px; padding: 3px 9px; font-size: .78rem; cursor: pointer; font-family: inherit;
+  }
+  .notice button:hover { border-color: var(--accent); color: var(--accent); }
+
+  nav.tabs {
+    display: flex; gap: 2px; padding: 0 20px; border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+  }
+  nav.tabs button {
+    background: none; border: none; font-family: inherit; font-size: .88rem;
+    color: var(--ink-soft); padding: 12px 14px 11px; cursor: pointer; border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+  nav.tabs button:hover { color: var(--ink); }
+  nav.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 500; }
+  nav.tabs button:focus-visible, button:focus-visible, input:focus-visible, .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  main { max-width: 860px; margin: 0 auto; padding: 22px 20px 60px; }
+  section[hidden] { display: none; }
+
+  .search-row { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  input[type="search"] {
+    flex: 1 1 240px; padding: 11px 13px; border: 1px solid var(--line); border-radius: 4px;
+    background: var(--panel); color: var(--ink); font-size: .95rem; font-family: inherit;
+  }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .chip {
+    border: 1px solid var(--line); background: var(--panel); color: var(--ink-soft);
+    border-radius: 20px; padding: 5px 12px; font-size: .78rem; cursor: pointer; font-family: inherit;
+  }
+  .chip[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--panel)); }
+
+  .count { color: var(--ink-soft); font-size: .82rem; margin-bottom: 10px; }
+
+  .grid { display: grid; gap: 10px; }
+  .card {
+    border: 1px solid var(--line); background: var(--panel); border-radius: 6px; overflow: hidden;
+  }
+  .card > button.head {
+    width: 100%; text-align: left; background: none; border: none; padding: 13px 15px;
+    display: flex; justify-content: space-between; align-items: center; gap: 10px; cursor: pointer;
+    font-family: inherit; color: var(--ink);
+  }
+  .card .name { font-weight: 600; }
+  .card .alias { color: var(--ink-soft); font-size: .78rem; font-weight: 400; }
+  .card .chev { color: var(--ink-soft); transition: transform .15s ease; flex: none; }
+  .card[data-open="true"] .chev { transform: rotate(90deg); }
+  .card .body { padding: 0 15px 16px; border-top: 1px solid var(--line); }
+  .card[data-open="false"] .body { display: none; }
+  .card .body p { margin: 12px 0 10px; color: var(--ink-soft); }
+  table.ranges { width: 100%; border-collapse: collapse; margin: 6px 0 4px; font-size: .87rem; }
+  table.ranges th, table.ranges td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  table.ranges th { color: var(--ink-soft); font-weight: 500; font-size: .78rem; }
+  table.ranges td.val { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Courier New", monospace; }
+  .flagrow.low td:first-child { color: var(--flag-low); }
+  .flagrow.high td:first-child { color: var(--flag-high); }
+  .why { font-size: .85rem; color: var(--ink-soft); }
+  .why strong { color: var(--ink); }
+  .rangenote { font-size: .76rem; color: var(--ink-soft); margin-top: 8px; }
+
+  .term { border-bottom: 1px solid var(--line); padding: 13px 0; }
+  .term:last-child { border-bottom: none; }
+  .term h3 { font-size: .98rem; margin-bottom: 3px; }
+  .term p { margin: 0; color: var(--ink-soft); }
+
+  .glossary dt { font-weight: 600; margin-top: 12px; font-family: inherit; }
+  .glossary dd { margin: 2px 0 0; color: var(--ink-soft); }
+
+  .warn-box {
+    background: var(--flag-high-bg); border: 1px solid color-mix(in srgb, var(--flag-high) 40%, transparent);
+    border-radius: 6px; padding: 14px 16px; margin-bottom: 16px;
+  }
+  .warn-box h3 { color: var(--flag-high); font-size: 1rem; margin-bottom: 6px; }
+  .warn-box p { margin: 0; color: var(--ink); font-size: .9rem; }
+  ul.warn-list { padding-left: 1.2em; margin: 0; }
+  ul.warn-list li { margin-bottom: 10px; color: var(--ink-soft); }
+  ul.warn-list strong { color: var(--ink); }
+
+  .empty { color: var(--ink-soft); padding: 30px 4px; text-align: center; font-size: .9rem; }
+  footer { text-align: center; color: var(--ink-soft); font-size: .76rem; padding: 20px; border-top: 1px solid var(--line); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Blood Test Guide</h1>
+  <span class="tag">A learning reference for common blood-test parameters and how to read a lab report</span>
+</header>
+
+<div class="notice" id="notice">
+  <span><strong>Educational tool only</strong> — not a diagnosis. Always ask a clinician about your own results.</span>
+  <button onclick="showTab('warnings')">Read the full notice</button>
+</div>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" aria-selected="true" data-tab="search">Test search</button>
+  <button role="tab" aria-selected="false" data-tab="terms">Report terms</button>
+  <button role="tab" aria-selected="false" data-tab="glossary">Glossary</button>
+  <button role="tab" aria-selected="false" data-tab="warnings">Warnings</button>
+</nav>
+
+<main>
+
+  <section id="tab-search">
+    <div class="search-row">
+      <input type="search" id="searchBox" placeholder="Search a test — e.g. hemoglobin, LDL, TSH…" aria-label="Search tests">
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="count" id="resultCount"></div>
+    <div class="grid" id="results"></div>
+  </section>
+
+  <section id="tab-terms" hidden>
+    <h2>How to read a lab report</h2>
+    <p style="color:var(--ink-soft)">The words and marks around each number carry meaning of their own. Here's what the common ones mean.</p>
+    <div id="termsList"></div>
+  </section>
+
+  <section id="tab-glossary" hidden>
+    <h2>Glossary</h2>
+    <p style="color:var(--ink-soft)">Plain-language definitions of words you'll run into on a lab report.</p>
+    <dl class="glossary" id="glossaryList"></dl>
+  </section>
+
+  <section id="tab-warnings" hidden>
+    <h2>Before you use this guide</h2>
+    <div class="warn-box">
+      <h3>This is not medical advice</h3>
+      <p>Nothing here diagnoses, treats, or rules out any condition. It explains what a parameter generally measures and what a typical reference range looks like — not what your specific result means for your health.</p>
+    </div>
+    <ul class="warn-list" id="warnList"></ul>
+  </section>
+
+</main>
+
+<footer>Reference ranges shown are typical adult examples for general education. Always compare your results to the range printed on your own report.</footer>
+
+<script>
+const TESTS = [
+  {name:"Hemoglobin", alias:"Hgb, Hb", cat:"Blood count", unit:"g/dL",
+   desc:"The protein in red blood cells that carries oxygen from your lungs to the rest of your body.",
+   why:"Screens for anemia (too little) or polycythemia (too much), and is tracked after blood loss or during treatment for blood conditions.",
+   ranges:[["Low","< 12.0","Female"],["Normal","12.0 – 15.5","Female"],["High","> 15.5","Female"],
+           ["Low","< 13.5","Male"],["Normal","13.5 – 17.5","Male"],["High","> 17.5","Male"]]},
+  {name:"White blood cell count", alias:"WBC, leukocytes", cat:"Blood count", unit:"×10⁹/L",
+   desc:"Counts the immune cells that fight infection and respond to inflammation.",
+   why:"A high count often points to infection or inflammation; a low count can mean reduced immune defenses, sometimes from medication or bone-marrow conditions.",
+   ranges:[["Low","< 4.0",""],["Normal","4.0 – 11.0",""],["High","> 11.0",""]]},
+  {name:"Platelets", alias:"PLT, thrombocytes", cat:"Blood count", unit:"×10⁹/L",
+   desc:"Cell fragments that clump together to stop bleeding when a blood vessel is injured.",
+   why:"Very low counts raise bleeding risk; very high counts can raise clotting risk. Often checked before surgery or during certain treatments.",
+   ranges:[["Low","< 150",""],["Normal","150 – 400",""],["High","> 400",""]]},
+  {name:"Fasting glucose", alias:"Blood sugar, FBS", cat:"Metabolic", unit:"mg/dL",
+   desc:"The amount of sugar circulating in your blood after not eating for at least 8 hours.",
+   why:"The main screening test for diabetes and prediabetes; also used to monitor people already diagnosed.",
+   ranges:[["Normal","70 – 99",""],["Prediabetes range","100 – 125",""],["Diabetes range","≥ 126",""]]},
+  {name:"Hemoglobin A1c", alias:"HbA1c, glycated hemoglobin", cat:"Metabolic", unit:"%",
+   desc:"Reflects your average blood sugar over roughly the past two to three months.",
+   why:"Used to diagnose diabetes and to see how well blood sugar has been controlled over time, without needing to fast.",
+   ranges:[["Normal","< 5.7",""],["Prediabetes range","5.7 – 6.4",""],["Diabetes range","≥ 6.5",""]]},
+  {name:"Total cholesterol", alias:"", cat:"Lipids", unit:"mg/dL",
+   desc:"The combined amount of all cholesterol carried in your blood, including LDL and HDL.",
+   why:"A first-look number in cardiovascular risk screening; usually interpreted alongside the individual lipid values below.",
+   ranges:[["Desirable","< 200",""],["Borderline high","200 – 239",""],["High","≥ 240",""]]},
+  {name:"LDL cholesterol", alias:"\"Bad\" cholesterol", cat:"Lipids", unit:"mg/dL",
+   desc:"Carries cholesterol to your arteries, where it can build up as plaque over time.",
+   why:"A key marker for long-term heart and stroke risk; treatment targets vary by a person's other risk factors.",
+   ranges:[["Optimal","< 100",""],["Near optimal","100 – 129",""],["High","≥ 160",""]]},
+  {name:"HDL cholesterol", alias:"\"Good\" cholesterol", cat:"Lipids", unit:"mg/dL",
+   desc:"Carries cholesterol away from your arteries back to the liver for removal.",
+   why:"Higher levels are generally protective; low levels are linked to greater cardiovascular risk.",
+   ranges:[["Low","< 40","Male"],["Low","< 50","Female"],["Protective","≥ 60",""]]},
+  {name:"Triglycerides", alias:"", cat:"Lipids", unit:"mg/dL",
+   desc:"A type of fat in the blood, largely from food, stored for later energy use.",
+   why:"Levels rise sharply after eating, which is why this test is usually done fasting; chronically high levels are linked to heart and pancreas risk.",
+   ranges:[["Normal","< 150",""],["Borderline high","150 – 199",""],["High","≥ 200",""]]},
+  {name:"ALT", alias:"Alanine aminotransferase, SGPT", cat:"Liver", unit:"U/L",
+   desc:"An enzyme mostly found inside liver cells that leaks into the blood when liver cells are damaged.",
+   why:"One of the most sensitive markers of liver cell injury, from causes ranging from fatty liver to medications to viral hepatitis.",
+   ranges:[["Normal","7 – 56",""],["Elevated","> 56",""]]},
+  {name:"AST", alias:"Aspartate aminotransferase, SGOT", cat:"Liver", unit:"U/L",
+   desc:"An enzyme found in the liver, heart, and muscle that rises when those tissues are damaged.",
+   why:"Usually read together with ALT; the ratio between the two can point toward the type of liver condition.",
+   ranges:[["Normal","10 – 40",""],["Elevated","> 40",""]]},
+  {name:"Creatinine", alias:"", cat:"Kidney", unit:"mg/dL",
+   desc:"A waste product from muscle activity that healthy kidneys filter out steadily.",
+   why:"The core measurement used to estimate how well your kidneys are filtering blood.",
+   ranges:[["Normal","0.6 – 1.1","Female"],["Normal","0.7 – 1.3","Male"],["Elevated","above range",""]]},
+  {name:"eGFR", alias:"Estimated glomerular filtration rate", cat:"Kidney", unit:"mL/min/1.73m²",
+   desc:"A calculated estimate of how much blood your kidneys filter each minute, based on creatinine, age, and sex.",
+   why:"The main number used to stage kidney function and track it over time.",
+   ranges:[["Normal","≥ 90",""],["Mildly reduced","60 – 89",""],["Reduced","< 60",""]]},
+  {name:"BUN", alias:"Blood urea nitrogen", cat:"Kidney", unit:"mg/dL",
+   desc:"A waste product from protein breakdown that the kidneys clear from the blood.",
+   why:"Considered alongside creatinine; can also shift with hydration, diet, and certain medications.",
+   ranges:[["Normal","7 – 20",""],["Elevated","> 20",""]]},
+  {name:"TSH", alias:"Thyroid-stimulating hormone", cat:"Thyroid", unit:"mIU/L",
+   desc:"A pituitary hormone that tells the thyroid gland how much thyroid hormone to make.",
+   why:"The primary screening test for an underactive or overactive thyroid; often the first clue before symptoms are obvious.",
+   ranges:[["Low (overactive signal)","< 0.4",""],["Normal","0.4 – 4.0",""],["High (underactive signal)","> 4.0",""]]},
+  {name:"Sodium", alias:"Na", cat:"Electrolytes", unit:"mmol/L",
+   desc:"The main electrolyte outside your cells, central to fluid balance and nerve signaling.",
+   why:"Shifts with hydration status, kidney function, and some medications; large swings can affect brain function.",
+   ranges:[["Low","< 135",""],["Normal","135 – 145",""],["High","> 145",""]]},
+  {name:"Potassium", alias:"K", cat:"Electrolytes", unit:"mmol/L",
+   desc:"An electrolyte critical for heart rhythm and muscle contraction.",
+   why:"Even modest abnormalities can affect the heart, so this value is watched closely, especially with kidney disease or certain medications.",
+   ranges:[["Low","< 3.5",""],["Normal","3.5 – 5.0",""],["High","> 5.0",""]]},
+  {name:"Calcium", alias:"Ca", cat:"Electrolytes", unit:"mg/dL",
+   desc:"A mineral needed for bones, nerve signaling, and muscle function, tightly regulated by hormones.",
+   why:"Abnormal levels can point to bone, kidney, parathyroid, or nutritional issues.",
+   ranges:[["Low","< 8.5",""],["Normal","8.5 – 10.5",""],["High","> 10.5",""]]},
+  {name:"Vitamin D", alias:"25-hydroxyvitamin D", cat:"Vitamins", unit:"ng/mL",
+   desc:"Reflects your body's stores of vitamin D, made in skin from sunlight and found in some foods.",
+   why:"Checked when bone health, muscle symptoms, or absorption problems are being investigated.",
+   ranges:[["Deficient","< 20",""],["Insufficient","20 – 29",""],["Sufficient","30 – 100",""]]},
+  {name:"Ferritin", alias:"", cat:"Iron studies", unit:"ng/mL",
+   desc:"A protein that stores iron; its blood level reflects your body's total iron reserves.",
+   why:"The most sensitive marker for iron-deficiency anemia; can also rise with inflammation independent of iron levels.",
+   ranges:[["Low","< 20",""],["Normal","20 – 250","Male"],["Normal","20 – 150","Female"]]},
+  {name:"CRP", alias:"C-reactive protein", cat:"Inflammation", unit:"mg/L",
+   desc:"A protein made by the liver that rises quickly whenever there's inflammation anywhere in the body.",
+   why:"A general marker of inflammation or infection — sensitive but not specific to any one cause.",
+   ranges:[["Normal","< 3.0",""],["Elevated","≥ 3.0",""]]}
+];
+
+const TERMS = [
+  ["Reference range / reference interval","The band of values seen in about 95% of a healthy comparison group for that lab. It's a statistical guide, not a strict line between healthy and unhealthy."],
+  ["Flag (H / L)","A letter next to a result marking it above (H) or below (L) the lab's reference range. A flag means \"outside the typical band,\" not automatically \"a problem.\""],
+  ["Critical value","A result extreme enough that the lab calls the ordering clinician right away, rather than waiting for the report to be reviewed normally."],
+  ["Panel / profile","A bundle of related tests ordered and reported together, such as a \"basic metabolic panel\" or \"lipid panel.\""],
+  ["Units of measurement","The scale a result is reported in, such as mg/dL or mmol/L. The same substance can be reported in different units depending on the country or lab — always compare a result to the range in the same units."],
+  ["Fasting requirement","Some tests (like fasting glucose or triglycerides) need 8–12 hours without food beforehand, because eating temporarily shifts the result."],
+  ["Specimen type","Whether the test was run on whole blood, serum, or plasma — the liquid portion of blood with or without clotting factors removed."],
+  ["Trend / serial results","Comparing a value across multiple visits over time, which often tells a clinician more than any single reading on its own."],
+  ["Lab-specific range","Reference ranges differ slightly between laboratories because of the equipment and method used — always use the range printed on your own report, not one you found elsewhere."]
+];
+
+const GLOSSARY = [
+  ["Anemia","A condition where the blood has fewer healthy red cells or less hemoglobin than typical, reducing oxygen delivery."],
+  ["Antibody","A protein the immune system makes to recognize and respond to a specific foreign substance."],
+  ["Biomarker","Any measurable substance in the body used as an indicator of a biological state or process."],
+  ["Enzyme","A protein that speeds up a specific chemical reaction in the body; many are measured to detect tissue damage."],
+  ["Hematology","The branch of lab testing focused on blood cells — red cells, white cells, and platelets."],
+  ["Homeostasis","The body's tendency to keep internal conditions, like electrolyte levels, within a stable range."],
+  ["Metabolic panel","A group of tests covering things like glucose, electrolytes, and kidney markers."],
+  ["Plasma","The liquid part of blood, including clotting factors, left after cells are removed."],
+  ["Serum","The liquid part of blood left after it has clotted and the clotting factors are removed."],
+  ["Specimen","The sample — blood, urine, etc. — collected from a patient for testing."],
+  ["Titer","A measurement of how concentrated a substance (often an antibody) is in a sample."],
+  ["Turnaround time","How long a lab takes to process a sample and report a result."],
+  ["Venipuncture","The process of drawing blood from a vein, usually in the arm."]
+];
+
+const WARNINGS = [
+  ["This guide is educational, not diagnostic.","It explains what a parameter generally measures. It cannot tell you what a specific result means for your health."],
+  ["Reference ranges vary by lab, age, sex, and life stage.","Pregnancy, growth in children, and normal aging all shift what's typical. Always use the range printed on your own report."],
+  ["One result is a snapshot, not the full picture.","Clinicians usually weigh a result alongside your symptoms, history, medications, and how it has changed over time."],
+  ["Never start, stop, or adjust a medication based on this guide.","Only a clinician who knows your full history can safely act on a lab result."],
+  ["Being \"in range\" doesn't rule out a problem, and being \"out of range\" doesn't confirm one.","Many factors — recent food, exercise, hydration, stress, or lab variation — can shift a single value."],
+  ["If a result concerns you, contact the clinician who ordered the test.","They have the context this guide doesn't, and can tell you whether follow-up is needed."]
+];
+
+const grid = document.getElementById("results");
+const chipsEl = document.getElementById("chips");
+const countEl = document.getElementById("resultCount");
+const searchBox = document.getElementById("searchBox");
+let activeCat = "All";
+const cats = ["All", ...new Set(TESTS.map(t => t.cat))];
+
+function renderChips(){
+  chipsEl.innerHTML = cats.map(c =>
+    `<button class="chip" aria-pressed="${c===activeCat}" data-cat="${c}">${c}</button>`
+  ).join("");
+  chipsEl.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+    activeCat = b.dataset.cat; renderChips(); renderResults();
+  }));
+}
+
+function rangeRows(t){
+  return t.ranges.map(([label,val,note]) => {
+    const cls = /low/i.test(label) ? "flagrow low" : /high/i.test(label) ? "flagrow high" : "flagrow";
+    return `<tr class="${cls}"><td>${label}</td><td class="val">${val} <span style="color:var(--ink-soft)">${t.unit}</span></td><td>${note||""}</td></tr>`;
+  }).join("");
+}
+
+function renderResults(){
+  const q = searchBox.value.trim().toLowerCase();
+  const matches = TESTS.filter(t => {
+    const inCat = activeCat === "All" || t.cat === activeCat;
+    const inText = !q || t.name.toLowerCase().includes(q) || t.alias.toLowerCase().includes(q);
+    return inCat && inText;
+  });
+  countEl.textContent = matches.length + (matches.length === 1 ? " test" : " tests");
+  if (!matches.length){
+    grid.innerHTML = `<div class="empty">No tests match "${q}". Try a different name or abbreviation.</div>`;
+    return;
+  }
+  grid.innerHTML = matches.map((t,i) => `
+    <div class="card" data-open="false" id="card-${i}">
+      <button class="head" aria-expanded="false">
+        <span><span class="name">${t.name}</span>${t.alias ? ` <span class="alias">(${t.alias})</span>` : ""}</span>
+        <span class="chev">▸</span>
+      </button>
+      <div class="body">
+        <p>${t.desc}</p>
+        <table class="ranges"><thead><tr><th>Level</th><th>Typical value</th><th></th></tr></thead>
+          <tbody>${rangeRows(t)}</tbody></table>
+        <div class="rangenote">Example ranges only — your lab's printed range is the one that applies to your report.</div>
+        <p class="why"><strong>Why it's tested:</strong> ${t.why}</p>
+      </div>
+    </div>`).join("");
+  grid.querySelectorAll(".card").forEach(card => {
+    card.querySelector(".head").addEventListener("click", () => {
+      const open = card.dataset.open === "true";
+      card.dataset.open = String(!open);
+      card.querySelector(".head").setAttribute("aria-expanded", String(!open));
+    });
+  });
+}
+
+searchBox.addEventListener("input", renderResults);
+renderChips();
+renderResults();
+
+document.getElementById("termsList").innerHTML = TERMS.map(([t,d]) =>
+  `<div class="term"><h3>${t}</h3><p>${d}</p></div>`).join("");
+
+document.getElementById("glossaryList").innerHTML = GLOSSARY.map(([t,d]) =>
+  `<dt>${t}</dt><dd>${d}</dd>`).join("");
+
+document.getElementById("warnList").innerHTML = WARNINGS.map(([t,d]) =>
+  `<li><strong>${t}</strong> ${d}</li>`).join("");
+
+function showTab(id){
+  document.querySelectorAll("nav.tabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === id)));
+  ["search","terms","glossary","warnings"].forEach(t => {
+    document.getElementById("tab-"+t).hidden = (t !== id);
+  });
+}
+document.querySelectorAll("nav.tabs button").forEach(b => b.addEventListener("click", () => showTab(b.dataset.tab)));
+
+document.getElementById("notice").querySelector("button")?.addEventListener("click", () => {});
+</script>
+</body>
+</html>
